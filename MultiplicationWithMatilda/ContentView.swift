@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var currentQuestionNumber = 1
     @State private var question = ""
     @State private var answer = ""
+    @State private var isPresentingAlert = false
     
     
     private var arrayDifficulty = [5,10,15,20]
@@ -33,10 +34,12 @@ struct ContentView: View {
     }
     
     func createQuestion(){
+        question = ""
+        answer = ""
         let randomNumber = (0...12).randomElement() ?? 1
         let m = selectedTimesTable * randomNumber
         correctAnswer = m
-        question = "\(m) x \(randomNumber)"
+        question = "\(randomNumber) x \(selectedTimesTable)"
     }
     
     var body: some View {
@@ -62,10 +65,16 @@ struct ContentView: View {
                 
                 Section{
                     Button("Submit!"){
-                        createQuestion()
+                        isPresentingAlert = true
                     }
                 }
+                .alert(isPresented: $isPresentingAlert, content: {
+                    Alert(title: Text((Int(answer) ?? 0) == correctAnswer ? "Correct": "Wrong"), message: Text(""), dismissButton: .default(Text("")){
+                        createQuestion()
+                    })
+                })
             }
+            
         }
     }
     
